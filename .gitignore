@@ -44,3 +44,8 @@ canvas_api_docs/
 get_course_grades.py
 gradebook.json
 .env.template
+
+# Code review reports (internal use only)
+CODE_REVIEW_REPORT.md
+*_REVIEW_*.md
+.claude/*
