@@ -30,25 +30,13 @@ All student data is anonymized **before** it reaches AI systems, ensuring comple
 
 ## Quick Start (Recommended)
 
-The optimal way to install is using `uvx` for global access:
+The easiest way to get started is with our automated installer:
 
 ```bash
 # Clone the repository
 git clone https://github.com/vishalsachdev/canvas-mcp.git
 cd canvas-mcp
 
-# Install globally with uvx (no virtual environment needed)
-uvx install .
-
-# Test installation
-canvas-mcp-server --help
-```
-
-## Alternative: Automated Installation
-
-For development or if you prefer virtual environments:
-
-```bash
 # Run the automated installer
 python scripts/install.py
 ```
@@ -59,6 +47,19 @@ The installer will:
 - ✅ Create environment configuration template
 - ✅ Configure Claude Desktop integration
 - ✅ Test the installation
+
+## Alternative: Development Installation
+
+For developers who prefer more control or want to contribute:
+
+```bash
+# Clone the repository
+git clone https://github.com/vishalsachdev/canvas-mcp.git
+cd canvas-mcp
+
+# No installation needed - use uvx to run directly
+uvx --from . canvas-mcp-server --help
+```
 
 ## Manual Installation
 
