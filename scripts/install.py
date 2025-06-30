@@ -139,9 +139,12 @@ def update_claude_desktop_config():
     
     # Get the absolute path to the current directory
     project_path = Path.cwd().absolute()
+    venv_python = project_path / ".venv" / "bin" / "python"
     
     config["mcpServers"]["canvas-api"] = {
-        "command": "canvas-mcp-server",
+        "command": str(venv_python),
+        "args": ["-m", "canvas_mcp.server"],
+        "cwd": str(project_path),
         "env": {
             "PYTHONPATH": str(project_path / "src")
         }

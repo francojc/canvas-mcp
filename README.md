@@ -28,15 +28,27 @@ All student data is anonymized **before** it reaches AI systems, ensuring comple
 - **Canvas API Access** - API token and institution URL
 - **Claude Desktop** - For MCP integration
 
-## Quick Start (Automated Installation)
+## Quick Start (Recommended)
 
-The fastest way to get started is with our automated installer:
+The optimal way to install is using `uvx` for global access:
 
 ```bash
 # Clone the repository
 git clone https://github.com/vishalsachdev/canvas-mcp.git
 cd canvas-mcp
 
+# Install globally with uvx (no virtual environment needed)
+uvx install .
+
+# Test installation
+canvas-mcp-server --help
+```
+
+## Alternative: Automated Installation
+
+For development or if you prefer virtual environments:
+
+```bash
 # Run the automated installer
 python scripts/install.py
 ```
@@ -52,11 +64,18 @@ The installer will:
 
 If you prefer manual setup:
 
-### 1. Install Dependencies
+### 1. Create Virtual Environment
 
 ```bash
 # Install uv package manager (faster than pip)
 pip install uv
+
+# Create virtual environment
+uv venv
+
+# Activate virtual environment
+source .venv/bin/activate  # On macOS/Linux
+# OR: .venv\Scripts\activate  # On Windows
 
 # Install the package
 uv pip install -e .
@@ -69,12 +88,17 @@ uv pip install -e .
 cp env.template .env
 
 # Edit with your Canvas credentials
-# Required: CANVAS_API_TOKEN, CANVAS_API_URL
+# Required: CANVAS_API_TOKEN, CANVAS_API_URL (must end with /api/v1)
+# Example: CANVAS_API_URL=https://yourschool.instructure.com/api/v1
 ```
 
 Get your Canvas API token from: **Canvas → Account → Settings → New Access Token**
 
+**Important**: Your `CANVAS_API_URL` must end with `/api/v1` for the API to work correctly.
+
 ### 3. Claude Desktop Setup
+
+**For uvx Installation (Recommended):**
 
 Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
@@ -82,22 +106,59 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "canvas-api": {
-      "command": "canvas-mcp-server"
+      "command": "uvx",
+      "args": ["--from", "/path/to/canvas-mcp", "canvas-mcp-server"],
+      "env": {
+        "CANVAS_API_TOKEN": "your_canvas_api_token_here",
+        "CANVAS_API_URL": "https://yourschool.instructure.com/api/v1",
+        "ENABLE_DATA_ANONYMIZATION": "true"
+      }
     }
   }
 }
 ```
 
+**Replace `/path/to/canvas-mcp` with your actual repository path.**
+
+**For Virtual Environment Installation:**
+
+```json
+{
+  "mcpServers": {
+    "canvas-api": {
+      "command": "/path/to/canvas-mcp/.venv/bin/python",
+      "args": ["-m", "canvas_mcp.server"],
+      "cwd": "/path/to/canvas-mcp",
+      "env": {
+        "PYTHONPATH": "/path/to/canvas-mcp/src",
+        "CANVAS_API_TOKEN": "your_canvas_api_token_here",
+        "CANVAS_API_URL": "https://yourschool.instructure.com/api/v1",
+        "ENABLE_DATA_ANONYMIZATION": "true"
+      }
+    }
+  }
+}
+```
+
+**Security Note**: Copy the values from your `.env` file into the Claude Desktop config, as MCP servers don't automatically load `.env` files when run by Claude Desktop.
+
 ## Verification
 
-Test your setup:
+Test your setup (make sure virtual environment is activated):
 
 ```bash
+# Activate virtual environment first
+source .venv/bin/activate
+
 # Test Canvas API connection
 canvas-mcp-server --test
 
 # View configuration
 canvas-mcp-server --config
+
+# Alternative ways to run if command not found:
+# python -m canvas_mcp.server --test
+# uv run canvas-mcp-server --test
 
 # Start server (for manual testing)
 canvas-mcp-server
